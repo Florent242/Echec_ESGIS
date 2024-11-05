@@ -19,8 +19,7 @@ Ce projet est un jeu d'échecs complet développé en Java, permettant à deux j
 ## Installation
 1. Clonez ou téléchargez ce projet sur votre machine locale :
    ```bash
-   git clone https://github.com/Florent242/jeu-echecs-java.git
-
+   git clone https://github.com/Florent242/Echec_ESGIS.git
 
 Comment jouer ??
 Le joueur humain choisit la couleur des pièces (blanc ou noir).
