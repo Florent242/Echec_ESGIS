@@ -1,0 +1,29 @@
+##
+J'ai generer l'echiquier de tel sorte que j'affiche la grille avec les pieces
+correspondant a leur place 
+##
+Pour chaque pieces comme cavalier, tour, fou, roi, dame, pion
+j'ai mis leur déplacement possible
+        J'ai deja gerer le roque qui consiste a gerer les mouvements spéciaux de l'une des tours et du roi
+        @Comme roque :
+            -le petit roque
+            -le grand roque
+        Mais on ne roque pas si :
+            -il ya une ou plusieurs pieces entre le roi et la tour
+            -le roi ou la tour ont deja bougé et sont revenus a leur case initial
+            -si le roi est en echec et que si la case qu'il veut aller est deja attaquée
+        Cependant il est possible de roquer si la tour est attaquée dans le dernier cas.
+##
+#
+Deroulement de la partie
+#
+le joueur en blanc commence toujour
+puis chaque joueur effectue un coup à tour de role
+
+Warning :
+            La notion d'echec n'est pas encore mis
+            le deplacemeent du roi dans une case où il serait en echec
+
+    
+Resultat de la partie:
+    on doit pouvoir bouffer les pions juste en diagonale
