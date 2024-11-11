@@ -37,8 +37,7 @@ public class Grille {
         }
     }
 
-    // Placement initial des pièces
-    public void PlaceGrille() { // Placer les pièces blanches 
+    public void PlaceGrille() {
         grille[7][0] = new Tour("blanc"); 
         grille[7][1] = new Cavalier("blanc"); 
         grille[7][2] = new Fou("blanc"); 
@@ -49,7 +48,7 @@ public class Grille {
         grille[7][7] = new Tour("blanc"); 
         for (int i = 0; i < 8; i++) { 
             grille[6][i] = new Pion("blanc"); 
-        } // Placer les pièces noires 
+        } 
         grille[0][0] = new Tour("noir"); 
         grille[0][1] = new Cavalier("noir"); 
         grille[0][2] = new Fou("noir"); 

@@ -18,8 +18,7 @@ abstract class Pieces {
         return "P";
     }
     public void setNouvellePiece(Pieces nouvellePiece) {
-        this.couleur = nouvellePiece.getCouleur();  // Update couleur if needed
-        // Replace the current piece with the new one
+        this.couleur = nouvellePiece.getCouleur(); 
     }
     
     public abstract List<int[]> deplacementsPossibles(int x, int y, Grille grille);

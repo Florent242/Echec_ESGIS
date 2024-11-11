@@ -21,23 +21,20 @@ public class EchiquierGUI extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(8, 8));
 
-        // Initialisation des boutons
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 final int x = i;
                 final int y = j;
                 JButton bouton = new JButton();
                 boutons[i][j] = bouton;
-                bouton.setFont(new Font("Arial", Font.PLAIN, 40)); // Augmentation de la taille pour bien voir les symboles
+                bouton.setFont(new Font("Arial", Font.PLAIN, 40)); 
 
-                // Choix de la couleur des cases
                 if ((i + j) % 2 == 0) {
                     bouton.setBackground(Color.WHITE);
                 } else {
                     bouton.setBackground(new Color(128, 128, 128));
                 }
 
-                // Action du clic sur chaque bouton
                 bouton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         gererClic(x, y);
@@ -113,7 +110,6 @@ public class EchiquierGUI extends JFrame {
         }
     }
     
-    // Méthode pour obtenir le caractère ASCII ou Unicode de la pièce
     private String getAsciiPiece(Pieces piece) {
         String couleur = piece.getCouleur().toLowerCase();
         switch (piece.getClass().getSimpleName()) {
@@ -130,7 +126,7 @@ public class EchiquierGUI extends JFrame {
             case "Roi":
                 return couleur.equals("blanc") ? "♔" : "♚";
             default:
-                return ""; // En cas d'erreur
+                return ""; 
         }
     }
     
