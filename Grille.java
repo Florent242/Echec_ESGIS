@@ -5,27 +5,27 @@ import java.util.ArrayList;
 
 
 public class Grille {
-    private Pieces[][] grille = new Pieces[9][9];
+    private Pieces[][] grille = new Pieces[8][8];
     private boolean tourBlanc = true;
     private int compteur50Coups = 0;
 
     public Grille() {
-        for (int ligne = 1; ligne < 9; ligne++) {
-            for (int colonn = 1; colonn < 9; colonn++) {
+        for (int ligne = 0; ligne < 8; ligne++) {
+            for (int colonn = 0; colonn < 8; colonn++) {
                 grille[ligne][colonn] = null;
             }
         }
     }
 
     public Pieces getPiece(int ligne, int colonn) {
-        if (ligne >= 1 && ligne <= 8 && colonn >= 1 && colonn <= 8) {
+        if (ligne >= 0 && ligne <= 7 && colonn >= 0 && colonn <= 7) {
             return grille[ligne][colonn];
         }
         return null;
     }
 
     public void AfficherGrille() {
-        for (int ligne = 1; ligne < 9; ligne++) {
+        for (int ligne = 0; ligne < 8; ligne++) {
             for (int colonn = 1; colonn < 9; colonn++) {
                 if (grille[ligne][colonn] == null) {
                     System.out.print("[ ]");
@@ -38,32 +38,29 @@ public class Grille {
     }
 
     // Placement initial des pièces
-    public void PlaceGrille() {
-        grille[1][1] = new Tour("noir");
-        grille[1][2] = new Cavalier("noir");
-        grille[1][3] = new Fou("noir");
-        grille[1][4] = new Dame("noir");
-        grille[1][5] = new Roi("noir");
-        grille[1][6] = new Fou("noir");
-        grille[1][7] = new Cavalier("noir");
-        grille[1][8] = new Tour("noir");
-
-        for (int colonn = 1; colonn < 9; colonn++) {
-            grille[2][colonn] = new Pion("noir");
-        }
-
-        grille[8][1] = new Tour("blanc");
-        grille[8][2] = new Cavalier("blanc");
-        grille[8][3] = new Fou("blanc");
-        grille[8][4] = new Dame("blanc");
-        grille[8][5] = new Roi("blanc");
-        grille[8][6] = new Fou("blanc");
-        grille[8][7] = new Cavalier("blanc");
-        grille[8][8] = new Tour("blanc");
-
-        for (int colonn = 1; colonn < 9; colonn++) {
-            grille[7][colonn] = new Pion("blanc");
-        }
+    public void PlaceGrille() { // Placer les pièces blanches 
+        grille[7][0] = new Tour("blanc"); 
+        grille[7][1] = new Cavalier("blanc"); 
+        grille[7][2] = new Fou("blanc"); 
+        grille[7][3] = new Dame("blanc"); 
+        grille[7][4] = new Roi("blanc"); 
+        grille[7][5] = new Fou("blanc"); 
+        grille[7][6] = new Cavalier("blanc"); 
+        grille[7][7] = new Tour("blanc"); 
+        for (int i = 0; i < 8; i++) { 
+            grille[6][i] = new Pion("blanc"); 
+        } // Placer les pièces noires 
+        grille[0][0] = new Tour("noir"); 
+        grille[0][1] = new Cavalier("noir"); 
+        grille[0][2] = new Fou("noir"); 
+        grille[0][3] = new Dame("noir"); 
+        grille[0][4] = new Roi("noir"); 
+        grille[0][5] = new Fou("noir"); 
+        grille[0][6] = new Cavalier("noir"); 
+        grille[0][7] = new Tour("noir"); 
+        for (int i = 0; i < 8; i++) { 
+            grille[1][i] = new Pion("noir"); 
+        } 
     }
 
     public boolean deplacePiece(int DeplaX, int DeplaY, int ArrX, int ArrY) {
@@ -138,8 +135,8 @@ public class Grille {
     
     public boolean roiEnEchec(String couleur) {
         int[] positionRoi = trouverRoi(couleur);
-        for (int i = 1; i <= 8; i++) {
-            for (int j = 1; j <= 8; j++) {
+        for (int i = 0; i <= 7; i++) {
+            for (int j = 0; j <= 7; j++) {
                 Pieces piece = grille[i][j];
                 if (piece != null && !piece.getCouleur().equals(couleur)) {
                     if (piece.Bouge(i, j, positionRoi[0], positionRoi[1], grille)) {
@@ -152,8 +149,8 @@ public class Grille {
     }
 
     private int[] trouverRoi(String couleur) {
-        for (int i = 1; i <= 8; i++) {
-            for (int j = 1; j <= 8; j++) {
+        for (int i = 0; i <= 7; i++) {
+            for (int j = 0; j <= 7; j++) {
                 if (grille[i][j] instanceof Roi && grille[i][j].getCouleur().equals(couleur)) {
                     return new int[]{i, j};
                 }
@@ -165,12 +162,12 @@ public class Grille {
     public boolean estEchecEtMat(String couleur) {
         if (!roiEnEchec(couleur)) return false;
 
-        for (int i = 1; i <= 8; i++) {
-            for (int j = 1; j <= 8; j++) {
+        for (int i = 0; i <= 7; i++) {
+            for (int j = 0; j <= 7; j++) {
                 Pieces piece = grille[i][j];
                 if (piece != null && piece.getCouleur().equals(couleur)) {
-                    for (int x = 1; x <= 8; x++) {
-                        for (int y = 1; y <= 8; y++) {
+                    for (int x = 0; x <= 7; x++) {
+                        for (int y = 0; y <= 7; y++) {
                             if (piece.Bouge(i, j, x, y, grille)) {
                                 Pieces tmp = grille[x][y];
                                 grille[x][y] = piece;
@@ -207,12 +204,12 @@ public class Grille {
     public boolean estPat(String couleur) {
         if (roiEnEchec(couleur)) return false;
         
-        for (int i = 1; i <= 8; i++) {
-            for (int j = 1; j <= 8; j++) {
+        for (int i = 0; i <= 7; i++) {
+            for (int j = 0; j <= 7; j++) {
                 Pieces piece = grille[i][j];
                 if (piece != null && piece.getCouleur().equals(couleur)) {
-                    for (int x = 1; x <= 8; x++) {
-                        for (int y = 1; y <= 8; y++) {
+                    for (int x = 0; x <= 7; x++) {
+                        for (int y = 0; y <= 7; y++) {
                             if (piece.Bouge(i, j, x, y, grille)) {
                                 return false;
                             }
@@ -234,7 +231,7 @@ public class Grille {
     ///////////////////////////////////////////////////////////////////
     public List<int[]> deplacementsPossibles(int x, int y, Grille grille) {
         List<int[]> deplacements = new ArrayList<>();
-        Pieces piece = grille.getPiece(x, y);  // Get the piece at (x, y)
+        Pieces piece = grille.getPiece(x, y);  
     
         if (piece != null) {
             if (piece instanceof Pion) {
@@ -258,20 +255,17 @@ public class Grille {
         Pieces pion = grille.getPiece(x, y);
         String couleur = pion.getCouleur();
     
-        // Basic move (one step forward)
         int direction = couleur.equals("blanc") ? -1 : 1;
         if (grille.getPiece(x + direction, y) == null) {
             deplacements.add(new int[]{x + direction, y});
         }
     
-        // First move (two steps forward)
         if ((x == 1 && couleur.equals("blanc")) || (x == 6 && couleur.equals("noir"))) {
             if (grille.getPiece(x + direction * 2, y) == null) {
                 deplacements.add(new int[]{x + direction * 2, y});
             }
         }
     
-        // Capturing moves (diagonal)
         if (y > 1 && grille.getPiece(x + direction, y - 1) != null) {
             deplacements.add(new int[]{x + direction, y - 1});
         }
@@ -284,7 +278,6 @@ public class Grille {
     public List<int[]> deplacementsTour(int x, int y, Grille grille) {
         List<int[]> deplacements = new ArrayList<>();
     
-        // Vertical moves
         for (int i = x + 1; i <= 8; i++) {
             if (grille.getPiece(i, y) == null) {
                 deplacements.add(new int[]{i, y});
@@ -292,7 +285,7 @@ public class Grille {
                 if (!grille.getPiece(i, y).getCouleur().equals(grille.getPiece(x, y).getCouleur())) {
                     deplacements.add(new int[]{i, y});
                 }
-                break;  // Blocked by a piece
+                break;  
             }
         }
         for (int i = x - 1; i >= 1; i--) {
@@ -302,11 +295,10 @@ public class Grille {
                 if (!grille.getPiece(i, y).getCouleur().equals(grille.getPiece(x, y).getCouleur())) {
                     deplacements.add(new int[]{i, y});
                 }
-                break;  // Blocked by a piece
+                break;  
             }
         }
     
-        // Horizontal moves
         for (int i = y + 1; i <= 8; i++) {
             if (grille.getPiece(x, i) == null) {
                 deplacements.add(new int[]{x, i});
@@ -314,7 +306,7 @@ public class Grille {
                 if (!grille.getPiece(x, i).getCouleur().equals(grille.getPiece(x, y).getCouleur())) {
                     deplacements.add(new int[]{x, i});
                 }
-                break;  // Blocked by a piece
+                break;  
             }
         }
         for (int i = y - 1; i >= 1; i--) {
@@ -324,7 +316,7 @@ public class Grille {
                 if (!grille.getPiece(x, i).getCouleur().equals(grille.getPiece(x, y).getCouleur())) {
                     deplacements.add(new int[]{x, i});
                 }
-                break;  // Blocked by a piece
+                break; 
             }
         }
     
@@ -353,9 +345,7 @@ public class Grille {
     public List<int[]> deplacementsFou(int x, int y, Grille grille) {
         List<int[]> deplacements = new ArrayList<>();
     
-        // Diagonal moves (4 directions: top-left, top-right, bottom-left, bottom-right)
         for (int i = 1; i <= 8; i++) {
-            // Top-left
             if (x - i >= 1 && y - i >= 1) {
                 if (grille.getPiece(x - i, y - i) == null) {
                     deplacements.add(new int[]{x - i, y - i});
@@ -363,11 +353,10 @@ public class Grille {
                     if (!grille.getPiece(x - i, y - i).getCouleur().equals(grille.getPiece(x, y).getCouleur())) {
                         deplacements.add(new int[]{x - i, y - i});
                     }
-                    break;  // Blocked
+                    break;  
                 }
             }
     
-            // Repeat for other diagonal directions...
         }
     
         return deplacements;
@@ -375,11 +364,11 @@ public class Grille {
     public List<int[]> deplacementsRoi(int x, int y, Grille grille) {
         List<int[]> deplacements = new ArrayList<>();
     
-        // Check all 8 possible surrounding positions (1 square in each direction)
+        
         int[] directions = {-1, 0, 1};
         for (int dx : directions) {
             for (int dy : directions) {
-                if (dx != 0 || dy != 0) { // Skip the current square
+                if (dx != 0 || dy != 0) { 
                     int newX = x + dx;
                     int newY = y + dy;
                     if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8 && grille.getPiece(newX, newY) == null) {
@@ -393,20 +382,17 @@ public class Grille {
     }
     public List<int[]> deplacementsDame(int x, int y, Grille grille) {
         List<int[]> deplacements = new ArrayList<>();
-        // Horizontal and Vertical Moves (like Rook)
         for (int i = 1; i < 8; i++) {
-            if (grille.getPiece(x + i, y) == null) deplacements.add(new int[]{x + i, y}); // Move Right
-            if (grille.getPiece(x - i, y) == null) deplacements.add(new int[]{x - i, y}); // Move Left
-            if (grille.getPiece(x, y + i) == null) deplacements.add(new int[]{x, y + i}); // Move Down
-            if (grille.getPiece(x, y - i) == null) deplacements.add(new int[]{x, y - i}); // Move Up
+            if (grille.getPiece(x + i, y) == null) deplacements.add(new int[]{x + i, y}); 
+            if (grille.getPiece(x - i, y) == null) deplacements.add(new int[]{x - i, y}); 
+            if (grille.getPiece(x, y + i) == null) deplacements.add(new int[]{x, y + i}); 
+            if (grille.getPiece(x, y - i) == null) deplacements.add(new int[]{x, y - i}); 
         }
-    
-        // Diagonal Moves (like Bishop)
         for (int i = 1; i < 8; i++) {
-            if (x + i < 8 && y + i < 8 && grille.getPiece(x + i, y + i) == null) deplacements.add(new int[]{x + i, y + i}); // Down-Right
-            if (x - i >= 0 && y + i < 8 && grille.getPiece(x - i, y + i) == null) deplacements.add(new int[]{x - i, y + i}); // Down-Left
-            if (x + i < 8 && y - i >= 0 && grille.getPiece(x + i, y - i) == null) deplacements.add(new int[]{x + i, y - i}); // Up-Right
-            if (x - i >= 0 && y - i >= 0 && grille.getPiece(x - i, y - i) == null) deplacements.add(new int[]{x - i, y - i}); // Up-Left
+            if (x + i < 8 && y + i < 8 && grille.getPiece(x + i, y + i) == null) deplacements.add(new int[]{x + i, y + i}); 
+            if (x - i >= 0 && y + i < 8 && grille.getPiece(x - i, y + i) == null) deplacements.add(new int[]{x - i, y + i});
+            if (x + i < 8 && y - i >= 0 && grille.getPiece(x + i, y - i) == null) deplacements.add(new int[]{x + i, y - i});
+            if (x - i >= 0 && y - i >= 0 && grille.getPiece(x - i, y - i) == null) deplacements.add(new int[]{x - i, y - i});
         }
     
         return deplacements;
@@ -416,10 +402,10 @@ public class Grille {
     public List<int[]> getDeplacementsPossibles(int x, int y) {
         Pieces piece = getPiece(x, y);
         if (piece != null) {
-            // Delegate move calculation to the piece itself
-            return piece.deplacementsPossibles(x, y, this);  // Pass the Grille instance (this refers to the current Grille)
+            
+            return piece.deplacementsPossibles(x, y, this);
         }
-        return new ArrayList<>();  // Return an empty list if there is no piece at the given coordinates
+        return new ArrayList<>(); 
     }
     
     

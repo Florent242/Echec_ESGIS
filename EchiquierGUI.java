@@ -5,8 +5,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.util.ArrayList;
-
 
 public class EchiquierGUI extends JFrame {
     private JButton[][] boutons = new JButton[8][8];
@@ -23,20 +21,23 @@ public class EchiquierGUI extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(8, 8));
 
+        // Initialisation des boutons
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 final int x = i;
                 final int y = j;
                 JButton bouton = new JButton();
                 boutons[i][j] = bouton;
-                bouton.setFont(new Font("Arial", Font.PLAIN, 20));
+                bouton.setFont(new Font("Arial", Font.PLAIN, 40)); // Augmentation de la taille pour bien voir les symboles
 
+                // Choix de la couleur des cases
                 if ((i + j) % 2 == 0) {
                     bouton.setBackground(Color.WHITE);
                 } else {
                     bouton.setBackground(new Color(128, 128, 128));
                 }
 
+                // Action du clic sur chaque bouton
                 bouton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         gererClic(x, y);
@@ -53,9 +54,9 @@ public class EchiquierGUI extends JFrame {
     public void actualiserEchiquier() {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                Pieces piece = grille.getPiece(i + 1, j + 1);
+                Pieces piece = grille.getPiece(i, j);
                 if (piece != null) {
-                    boutons[i][j].setText(piece.afficher());
+                    boutons[i][j].setText(getAsciiPiece(piece));
                     boutons[i][j].setForeground(piece.getCouleur().equals("blanc") ? Color.BLACK : Color.RED);
                 } else {
                     boutons[i][j].setText("");
@@ -64,54 +65,46 @@ public class EchiquierGUI extends JFrame {
             }
         }
     }
-
+    
     private void gererClic(int x, int y) {
         if (dernierClic == null) {
-            // Si aucune case n'a été sélectionnée, c'est un premier clic
             dernierClic = new int[]{x, y};
             boutonSelectionne = boutons[x][y];
-            boutonSelectionne.setBackground(Color.YELLOW);  // Mettre en surbrillance la pièce sélectionnée
-        
-            // Obtenir les déplacements possibles
-            List<int[]> deplacements = grille.getDeplacementsPossibles(x, y);
-        
-            // Colorier les cases valides
-            for (int[] deplacement : deplacements) {
-                int dx = deplacement[0];
-                int dy = deplacement[1];
-                boutons[dx][dy].setBackground(Color.GREEN);  // Mettre en surbrillance les cases possibles
-            }
+            boutonSelectionne.setBackground(Color.YELLOW);
+            afficherDeplacementsPossibles(x, y);
         } else {
-            // Si une case est déjà sélectionnée, tenter un déplacement
             if (boutonSelectionne != null) {
                 boutonSelectionne.setBackground((dernierClic[0] + dernierClic[1]) % 2 == 0 ? Color.WHITE : new Color(128, 128, 128));
             }
-        
+    
             boolean deplacementValide = grille.deplacePiece(dernierClic[0], dernierClic[1], x, y);
             if (deplacementValide) {
                 actualiserEchiquier();
-                
-                // Vérifier si un pion a atteint la dernière ligne
                 Pieces piece = grille.getPiece(x, y);
                 if (piece instanceof Pion && (x == 0 || x == 7)) {
                     Pieces nouvellePiece = demanderPromotion(piece.getCouleur());
-                    grille.getPiece(x, y).setNouvellePiece(nouvellePiece); // La méthode setNouvellePiece doit être ajoutée à votre classe Pieces
+                    grille.getPiece(x, y).setNouvellePiece(nouvellePiece);
                     actualiserEchiquier();
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "Déplacement invalide");
             }
-        
-            // Réinitialiser l'état
+    
             dernierClic = null;
             boutonSelectionne = null;
-        
-            // Réinitialiser les couleurs des cases
             actualiserCouleursCases();
         }    
     }
     
-    // Réinitialiser les couleurs des cases après un mouvement
+    private void afficherDeplacementsPossibles(int x, int y) {
+        List<int[]> deplacements = grille.getDeplacementsPossibles(x, y);
+        for (int[] deplacement : deplacements) {
+            int dx = deplacement[0];
+            int dy = deplacement[1];
+            boutons[dx][dy].setBackground(Color.GREEN);
+        }
+    }
+    
     private void actualiserCouleursCases() {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -120,16 +113,27 @@ public class EchiquierGUI extends JFrame {
         }
     }
     
-
-    public static void main(String[] args) {
-        Grille grille = new Grille();
-        grille.PlaceGrille();
-        
-        SwingUtilities.invokeLater(() -> {
-            EchiquierGUI gui = new EchiquierGUI(grille);
-            gui.setVisible(true);
-        });
+    // Méthode pour obtenir le caractère ASCII ou Unicode de la pièce
+    private String getAsciiPiece(Pieces piece) {
+        String couleur = piece.getCouleur().toLowerCase();
+        switch (piece.getClass().getSimpleName()) {
+            case "Pion":
+                return couleur.equals("blanc") ? "♙" : "♟";
+            case "Cavalier":
+                return couleur.equals("blanc") ? "♘" : "♞";
+            case "Tour":
+                return couleur.equals("blanc") ? "♖" : "♜";
+            case "Fou":
+                return couleur.equals("blanc") ? "♗" : "♝";
+            case "Dame":
+                return couleur.equals("blanc") ? "♕" : "♛";
+            case "Roi":
+                return couleur.equals("blanc") ? "♔" : "♚";
+            default:
+                return ""; // En cas d'erreur
+        }
     }
+    
     private Pieces demanderPromotion(String couleur) {
         String[] options = {"Dame", "Tour", "Fou", "Cavalier"};
         int choix = JOptionPane.showOptionDialog(this, "Choisissez la promotion :", 
@@ -142,5 +146,15 @@ public class EchiquierGUI extends JFrame {
             case 3: return new Cavalier(couleur);
             default: return new Dame(couleur);
         }
+    }
+
+    public static void main(String[] args) {
+        Grille grille = new Grille();
+        grille.PlaceGrille();
+        
+        SwingUtilities.invokeLater(() -> {
+            EchiquierGUI gui = new EchiquierGUI(grille);
+            gui.setVisible(true);
+        });
     }
 }
