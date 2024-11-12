@@ -55,32 +55,26 @@ class Roi extends Pieces {
     @Override
     public List<int[]> deplacementsPossibles(int x, int y, Grille grille) {
         List<int[]> deplacements = new ArrayList<>();
-        int direction = (this.getCouleur().equals("blanc")) ? 1 : -1;  // Les pions blancs avancent vers le bas, les noirs vers le haut
-
-        // Avancer d'une case
-        if (grille.getPiece(x + direction, y) == null) {
-            deplacements.add(new int[]{x + direction, y});
-        }
-
-        // Prendre en diagonale
-        if (y - 1 >= 1 && grille.getPiece(x + direction, y - 1) != null &&
-            !grille.getPiece(x + direction, y - 1).getCouleur().equals(this.getCouleur())) {
-            deplacements.add(new int[]{x + direction, y - 1});
-        }
-        if (y + 1 <= 8 && grille.getPiece(x + direction, y + 1) != null &&
-            !grille.getPiece(x + direction, y + 1).getCouleur().equals(this.getCouleur())) {
-            deplacements.add(new int[]{x + direction, y + 1});
-        }
-
-        // Mouvement spécial pour le premier déplacement du pion
-        if ((this.getCouleur().equals("blanc") && x == 2) || (this.getCouleur().equals("noir") && x == 7)) {
-            if (grille.getPiece(x + 2 * direction, y) == null) {
-                deplacements.add(new int[]{x + 2 * direction, y});
+        
+        int[] dx = {-1, -1, -1, 0, 0, 1, 1, 1};
+        int[] dy = {-1, 0, 1, -1, 1, -1, 0, 1};
+    
+        for (int i = 0; i < 8; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+    
+            // Vérifier les limites de l'échiquier (indices de 0 à 7)
+            if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+                Pieces piece = grille.getPiece(nx, ny);
+                if (piece == null || !piece.getCouleur().equals(this.getCouleur())) {
+                    deplacements.add(new int[]{nx, ny});
+                }
             }
         }
-
+    
         return deplacements;
     }
+    
 }
 
 class Dame extends Pieces {
@@ -95,9 +89,11 @@ class Dame extends Pieces {
 
     @Override
     public boolean Bouge(int DeplaX, int DeplaY, int ArrX, int ArrY, Pieces[][] echiquier) {
-        return (DeplaX == ArrX || DeplaY == ArrY) || 
-            (Math.abs(DeplaX - ArrX) == Math.abs(DeplaY - ArrY));
+        // Combiner les déplacements du Fou et de la Tour
+        return new Fou(this.getCouleur()).Bouge(DeplaX, DeplaY, ArrX, ArrY, echiquier) ||
+               new Tour(this.getCouleur()).Bouge(DeplaX, DeplaY, ArrX, ArrY, echiquier);
     }
+
     @Override
     public List<int[]> deplacementsPossibles(int x, int y, Grille grille) {
         List<int[]> deplacements = new ArrayList<>();
@@ -111,6 +107,7 @@ class Dame extends Pieces {
         return deplacements;
     }
 }
+
 
 class Tour extends Pieces {
     private boolean aBouge = false;
@@ -139,42 +136,62 @@ class Tour extends Pieces {
     @Override
     public List<int[]> deplacementsPossibles(int x, int y, Grille grille) {
         List<int[]> deplacements = new ArrayList<>();
-
+    
         // Haut
-        for (int i = x - 1; i >= 1; i--) {
-            if (grille.getPiece(i, y) == null) {
+        for (int i = x - 1; i >= 0; i--) {
+            Pieces piece = grille.getPiece(i, y);
+            if (piece == null) {
                 deplacements.add(new int[]{i, y});
             } else {
+                if (!piece.getCouleur().equals(this.getCouleur())) {
+                    deplacements.add(new int[]{i, y});
+                }
                 break;
             }
         }
+    
         // Bas
-        for (int i = x + 1; i <= 8; i++) {
-            if (grille.getPiece(i, y) == null) {
+        for (int i = x + 1; i < 8; i++) {
+            Pieces piece = grille.getPiece(i, y);
+            if (piece == null) {
                 deplacements.add(new int[]{i, y});
             } else {
+                if (!piece.getCouleur().equals(this.getCouleur())) {
+                    deplacements.add(new int[]{i, y});
+                }
                 break;
             }
         }
+    
         // Gauche
-        for (int j = y - 1; j >= 1; j--) {
-            if (grille.getPiece(x, j) == null) {
+        for (int j = y - 1; j >= 0; j--) {
+            Pieces piece = grille.getPiece(x, j);
+            if (piece == null) {
                 deplacements.add(new int[]{x, j});
             } else {
+                if (!piece.getCouleur().equals(this.getCouleur())) {
+                    deplacements.add(new int[]{x, j});
+                }
                 break;
             }
         }
+    
         // Droite
-        for (int j = y + 1; j <= 8; j++) {
-            if (grille.getPiece(x, j) == null) {
+        for (int j = y + 1; j < 8; j++) {
+            Pieces piece = grille.getPiece(x, j);
+            if (piece == null) {
                 deplacements.add(new int[]{x, j});
             } else {
+                if (!piece.getCouleur().equals(this.getCouleur())) {
+                    deplacements.add(new int[]{x, j});
+                }
                 break;
             }
         }
-
+    
         return deplacements;
     }
+    
 }
 
 class Fou extends Pieces {
@@ -194,14 +211,14 @@ class Fou extends Pieces {
     @Override
     public List<int[]> deplacementsPossibles(int x, int y, Grille grille) {
         List<int[]> deplacements = new ArrayList<>();
-
+    
         // Diagonales
         for (int dx = -1; dx <= 1; dx += 2) {
             for (int dy = -1; dy <= 1; dy += 2) {
-                for (int i = 1; i <= 8; i++) {
+                for (int i = 1; i < 8; i++) { // Boucle de 1 à 7 pour rester dans les limites de l'échiquier
                     int nx = x + dx * i;
                     int ny = y + dy * i;
-                    if (nx >= 1 && nx <= 8 && ny >= 1 && ny <= 8) {
+                    if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
                         Pieces piece = grille.getPiece(nx, ny);
                         if (piece == null) {
                             deplacements.add(new int[]{nx, ny});
@@ -217,9 +234,10 @@ class Fou extends Pieces {
                 }
             }
         }
-
+    
         return deplacements;
     }
+    
 }
 
 class Cavalier extends Pieces {
@@ -241,25 +259,26 @@ class Cavalier extends Pieces {
     @Override
     public List<int[]> deplacementsPossibles(int x, int y, Grille grille) {
         List<int[]> deplacements = new ArrayList<>();
-
-        int[] directions = {-2, -1, 1, 2};  // Pour les mouvements du cavalier (2 cases dans une direction et 1 dans l'autre)
-        for (int dx : directions) {
-            for (int dy : directions) {
-                if (Math.abs(dx) != Math.abs(dy)) {  // Uniquement les mouvements en L
-                    int nx = x + dx;
-                    int ny = y + dy;
-                    if (nx >= 1 && nx <= 8 && ny >= 1 && ny <= 8) {
-                        Pieces piece = grille.getPiece(nx, ny);
-                        if (piece == null || !piece.getCouleur().equals(this.getCouleur())) {
-                            deplacements.add(new int[]{nx, ny});
-                        }
-                    }
+    
+        int[] dx = {-2, -1, 1, 2, 2, 1, -1, -2};
+        int[] dy = {1, 2, 2, 1, -1, -2, -2, -1};
+    
+        for (int i = 0; i < 8; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+            // Vérifier les limites de l'échiquier (index 0 à 7)
+            if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+                Pieces piece = grille.getPiece(nx, ny);
+                // Ajouter la case si elle est vide ou occupée par une pièce ennemie
+                if (piece == null || !piece.getCouleur().equals(this.getCouleur())) {
+                    deplacements.add(new int[]{nx, ny});
                 }
             }
         }
-
+    
         return deplacements;
     }
+    
 }
 
 class Pion extends Pieces {
@@ -309,30 +328,28 @@ class Pion extends Pieces {
     @Override
     public List<int[]> deplacementsPossibles(int x, int y, Grille grille) {
         List<int[]> deplacements = new ArrayList<>();
-        int direction = (this.getCouleur().equals("blanc")) ? 1 : -1;  // Les pions blancs avancent vers le bas, les noirs vers le haut
-
-        // Avancer d'une case
-        if (grille.getPiece(x + direction, y) == null) {
+        int direction = (this.getCouleur().equals("blanc")) ? -1 : 1; // Les pions blancs avancent vers le haut, les noirs vers le bas
+    
+        if (x + direction >= 0 && x + direction < 8 && grille.getPiece(x + direction, y) == null) {
             deplacements.add(new int[]{x + direction, y});
         }
-
-        // Prendre en diagonale
-        if (y - 1 >= 1 && grille.getPiece(x + direction, y - 1) != null &&
-            !grille.getPiece(x + direction, y - 1).getCouleur().equals(this.getCouleur())) {
-            deplacements.add(new int[]{x + direction, y - 1});
+    
+        if (x + direction >= 0 && x + direction < 8) {
+            if (y - 1 >= 0 && grille.getPiece(x + direction, y - 1) != null && !grille.getPiece(x + direction, y - 1).getCouleur().equals(this.getCouleur())) {
+                deplacements.add(new int[]{x + direction, y - 1});
+            }
+            if (y + 1 < 8 && grille.getPiece(x + direction, y + 1) != null && !grille.getPiece(x + direction, y + 1).getCouleur().equals(this.getCouleur())) {
+                deplacements.add(new int[]{x + direction, y + 1});
+            }
         }
-        if (y + 1 <= 8 && grille.getPiece(x + direction, y + 1) != null &&
-            !grille.getPiece(x + direction, y + 1).getCouleur().equals(this.getCouleur())) {
-            deplacements.add(new int[]{x + direction, y + 1});
-        }
-
-        // Mouvement spécial pour le premier déplacement du pion
-        if ((this.getCouleur().equals("blanc") && x == 2) || (this.getCouleur().equals("noir") && x == 7)) {
-            if (grille.getPiece(x + 2 * direction, y) == null) {
+    
+        if ((this.getCouleur().equals("blanc") && x == 6) || (this.getCouleur().equals("noir") && x == 1)) {
+            if (grille.getPiece(x + 2 * direction, y) == null && grille.getPiece(x + direction, y) == null) {
                 deplacements.add(new int[]{x + 2 * direction, y});
             }
         }
-
+    
         return deplacements;
     }
+    
 }

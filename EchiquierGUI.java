@@ -58,7 +58,7 @@ public class EchiquierGUI extends JFrame {
                 } else {
                     boutons[i][j].setText("");
                 }
-                boutons[i][j].setBackground((i + j) % 2 == 0 ? Color.WHITE : new Color(128, 128, 128));
+                boutons[i][j].setBackground((i + j) % 2 == 0 ? Color.BLACK : new Color(128, 128, 128));
             }
         }
     }
@@ -132,17 +132,21 @@ public class EchiquierGUI extends JFrame {
     
     private Pieces demanderPromotion(String couleur) {
         String[] options = {"Dame", "Tour", "Fou", "Cavalier"};
-        int choix = JOptionPane.showOptionDialog(this, "Choisissez la promotion :", 
-                    "Promotion", JOptionPane.DEFAULT_OPTION, 
+        int choix = JOptionPane.showOptionDialog(this, 
+                    "Choisissez la promotion :", 
+                    "Promotion", 
+                    JOptionPane.DEFAULT_OPTION, 
                     JOptionPane.INFORMATION_MESSAGE, 
                     null, options, options[0]);
         switch (choix) {
+            case 0: return new Dame(couleur);
             case 1: return new Tour(couleur);
             case 2: return new Fou(couleur);
             case 3: return new Cavalier(couleur);
             default: return new Dame(couleur);
         }
     }
+    
 
     public static void main(String[] args) {
         Grille grille = new Grille();

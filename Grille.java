@@ -17,6 +17,11 @@ public class Grille {
         }
     }
 
+    public void setPiece(int x, int y, Pieces piece) { 
+        if (x >= 0 && x < 8 && y >= 0 && y < 8) { 
+            grille [x][y] = piece; 
+        } 
+    }
     public Pieces getPiece(int ligne, int colonn) {
         if (ligne >= 0 && ligne <= 7 && colonn >= 0 && colonn <= 7) {
             return grille[ligne][colonn];
